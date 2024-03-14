@@ -20,8 +20,19 @@ public struct Router<Screen, ScreenView: View>: View {
   }
   
   public var body: some View {
-    Node(allScreens: $routes, truncateToIndex: { index in routes = Array(routes.prefix(index)) }, index: 0, buildView: buildView)
-      .environmentObject(FlowNavigator($routes))
+    //iOS 16.4 because in prior versions navigationDestination(isPresented:) modifier has different behaviour
+    //Here the article https://www.pointfree.co/blog/posts/84-better-swiftui-navigation-apis
+    //Fixes available at https://github.com/pointfreeco/swiftui-navigation
+    //But in our case we have vice versa issue
+    //Prior to iOS 16.4 navigationDestination(isPresented:) not working
+    //Starting from iOS 16.4 navigationDestination(isPresented:) works normally
+    if #available(iOS 16.4, macOS 13.3, tvOS 16.0, watchOS 9.0, *) {
+      Node16(allScreens: $routes, truncateToIndex: { index in routes = Array(routes.prefix(index)) }, index: 0, buildView: buildView)
+        .environmentObject(FlowNavigator($routes))
+    } else {
+      Node(allScreens: $routes, truncateToIndex: { index in routes = Array(routes.prefix(index)) }, index: 0, buildView: buildView)
+        .environmentObject(FlowNavigator($routes))
+    }
   }
 }
 
