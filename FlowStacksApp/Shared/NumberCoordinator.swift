@@ -32,6 +32,7 @@ struct NumberCoordinator: View {
       if let number = Binding(unwrapping: $screen, case: /Screen.number) {
         NumberView(
           number: number,
+          routes: $routes,
           goRandom: {
             $routes.withDelaysIfUnsupported {
               $0 = randomRoutes
@@ -66,7 +67,7 @@ struct NumberCoordinator: View {
 
 struct NumberView: View {
   @Binding var number: Int
-  @EnvironmentObject var navigator: FlowNavigator<Screen>
+  @Binding var routes: [Route<Screen>]
 
   let goRandom: (() -> Void)?
 
@@ -74,24 +75,24 @@ struct NumberView: View {
     VStack(spacing: 8) {
       Stepper("\(number)", value: $number)
       Button("Present Double (cover)") {
-        navigator.presentCover(.number(number * 2), embedInNavigationView: true)
+        routes.presentCover(.number(number * 2), embedInNavigationView: true)
       }
       .accessibilityIdentifier("Present Double (cover) from \(number)")
       Button("Present Double (sheet)") {
-        navigator.presentSheet(.number(number * 2), embedInNavigationView: true)
+        routes.presentSheet(.number(number * 2), embedInNavigationView: true)
       }
       .accessibilityIdentifier("Present Double (sheet) from \(number)")
       Button("Push next") {
-        navigator.push(.number(number + 1))
+        routes.push(.number(number + 1))
       }
       .accessibilityIdentifier("Push next from \(number)")
       if let goRandom = goRandom {
         Button("Go random", action: goRandom)
       }
-      if navigator.routes.count > 1 {
-        Button("Go back") { navigator.goBack() }
+      if routes.count > 1 {
+        Button("Go back") { routes.goBack() }
           .accessibilityIdentifier("Go back from \(number)")
-        Button("Go back to root") { navigator.goBackToRoot() }
+        Button("Go back to root") { routes.goBackToRoot() }
           .accessibilityIdentifier("Go back to root from \(number)")
       }
     }

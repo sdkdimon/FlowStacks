@@ -28,10 +28,8 @@ public struct Router<Screen, ScreenView: View>: View {
     //Starting from iOS 16.4 navigationDestination(isPresented:) works normally
     if #available(iOS 16.4, macOS 13.3, tvOS 16.0, watchOS 9.0, *) {
       Node16(allScreens: $routes, truncateToIndex: { index in routes = Array(routes.prefix(index)) }, index: 0, buildView: buildView)
-        .environmentObject(FlowNavigator($routes))
     } else {
       Node(allScreens: $routes, truncateToIndex: { index in routes = Array(routes.prefix(index)) }, index: 0, buildView: buildView)
-        .environmentObject(FlowNavigator($routes))
     }
   }
 }

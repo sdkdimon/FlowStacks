@@ -44,7 +44,7 @@ struct VMCoordinator: View {
       case .numberList(let viewModel):
         NumberListView(viewModel: viewModel)
       case .numberDetail(let viewModel):
-        NumberDetailView(viewModel: viewModel)
+        NumberDetailView(viewModel: viewModel, routes: $viewModel.routes)
       }
     }
   }
@@ -111,7 +111,7 @@ struct NumberDetailView: View {
 
   @Environment(\.presentationMode) var presentationMode
 
-  @EnvironmentObject var navigator: FlowNavigator<VMCoordinatorViewModel.Screen>
+  @Binding var routes: [Route<VMCoordinatorViewModel.Screen>]
 
   var body: some View {
     VStack {
@@ -121,7 +121,7 @@ struct NumberDetailView: View {
         presentationMode.wrappedValue.dismiss()
       }
       Button("Navigator Dismiss") {
-        navigator.goBack()
+        routes.goBack()
       }
     }
     .navigationTitle("Number \(viewModel.number)")
